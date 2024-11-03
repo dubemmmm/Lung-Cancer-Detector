@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Document</title>
+     <link href='https://fonts.googleapis.com/css?family=Sofia Sans' rel='stylesheet'>
+     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+</head>
+<body>
+     <div class="full_page">
+<!--          <div class="doughnut"></div>-->
+          <div class="logo_div">
+               <img src="/static/logo.svg" class="logo">
+          </div>
+
+          <div class="content_div">
+               <form action="/predict" method="post"  enctype="multipart/form-data" class="form">
+                    <div class="upload_lung_pic">
+                         <div class="dragAndDropDiv" id="dropRegion">
+                              <label class="upload_button_div" id="upload_button_div">
+                                   Upload <img src="/static/upload.svg" class="upload_icon" />
+                              </label>
+                              <p>
+                                   Drag and drop image here or browse files to upload image
+                              </p>
+                         </div>
+                         <input type="file" accept="image/*" required name="lungPic" id="lungPic">
+                     </div>
+          
+                    <div class="textbox_div">
+                         <label class="textboxLabel">
+                              <span>Firstname(<span class="required_star">*</span>):</span>
+                              <input type="text" name="firstname" required  class="textbox" />
+                         </label>
+                         <label class="textboxLabel">
+                              <span>Lastname(<span class="required_star">*</span>):</span>
+                              <input type="text" name="lastname" required class="textbox" />
+                         </label>
+                         <label class="textboxLabel">
+                              <span>Sex(<span class="required_star">*</span>):</span>
+                              <select name="sex" required class="textbox">
+                                   <option>No option</option>
+                                   <option>Male</option>
+                                   <option>Female</option>
+                              </select>
+                         </label>
+                       
+                         <label for="termsAndCondition" class="termsAndConditionLabel"><input type="checkbox" name="termsAndCondition" id="termsAndCondition" class="termsAndConditionCheck"/>I agree to the <span>terms and conditions</span> </label>
+                         <div class="predict_n_try_again_div_button">
+                              <input type="submit" value="Predict" class="predict"/>
+                              <img src="/static/predict.svg" alt="predict logo" class="predict_logo"/>
+                         </div>
+
+
+                         {% if returnedResponse %}
+                              {% if returnedResponse.error %}
+                                   <div class="error_div">
+                                        {{returnedResponse.error}}
+                                   </div>
+                              {% endif %}
+                         {% endif %}
+
+                    </div>
+               </form>
+          </div>
+     </div>    
+</body>
+</html>
+
+<script>
+     var dropRegion = document.getElementById("dropRegion");
+     var upload_button_div = document.getElementById("upload_button_div")
+     var image = document.getElementById('lungPic')
+
+
+     dropRegion.addEventListener("click", function(){
+          image.click();
+     })
+
+     image.addEventListener("change", function () {
+          var file = this.files[0]
+
+          let reader = new FileReader();
+          reader.addEventListener("load", function(){
+               dropRegion.innerHTML = ''; // Clear previous content, if any.
+               var imgElement = document.createElement("img");
+               imgElement.src = this.result;
+               imgElement.classList.add("previewImage"); // You can add a class to style the image if needed.
+               dropRegion.appendChild(imgElement);
+          })
+          reader.readAsDataURL(file);
+
+     });
+</script>
